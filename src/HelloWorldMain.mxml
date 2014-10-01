@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+  Created by jun on 9/14/14.
+-->
+<s:ViewNavigatorApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    title="Hello World!"
+    applicationDPI="320"
+    applicationComplete="_onApplicationComplete( event )">
+
+    <fx:Script>
+        <![CDATA[
+            import edu.du.mobile.control.events.NavigationEvent;
+            import edu.du.mobile.model.constants.ApplicationScreens;
+            import edu.du.mobile.view.LocationDetailsView;
+            import edu.du.mobile.view.LocationFeedListView;
+            import edu.du.mobile.view.LoginOrRegisterView;
+
+            import mx.events.FlexEvent;
+
+            private function _onApplicationComplete( event:FlexEvent ):void
+            {
+                this.addEventListener( NavigationEvent.GOTO_SCREEN, _onGotoScreen );
+
+                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER ) );
+            }
+
+            private function _onGotoScreen( event:NavigationEvent ):void
+            {
+                switch( event.screenName )
+                {
+                    case ApplicationScreens.LOCATION_FEED_LIST:
+                    {
+                        navigator.pushView( LocationFeedListView );
+                        break;
+                    }
+                    case ApplicationScreens.LOCATION_DETAILS:
+                    {
+                        navigator.pushView( LocationDetailsView );
+                        break;
+                    }
+                    case ApplicationScreens.LOGIN:
+                    case ApplicationScreens.REGISTER:
+                    {
+                        navigator.pushView( LoginOrRegisterView, event.screenName );
+                        break;
+                    }
+                    default: {};
+                }
+            }
+        ]]>
+    </fx:Script>
+
+</s:ViewNavigatorApplication>

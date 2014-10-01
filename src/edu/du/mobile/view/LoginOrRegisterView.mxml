@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<!--
+  Created by jun on 9/14/14.
+-->
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    xmlns:popups="edu.du.mobile.view.popups.*">
+
+    <fx:Script>
+        <![CDATA[
+            import edu.du.mobile.model.constants.ApplicationScreens;
+
+            import mx.managers.PopUpManager;
+
+            public static const VIEW_STATE_LOGIN:String = "login";
+            public static const VIEW_STATE_REGISTER:String = "register";
+
+            private const _defaultMessagingPopupTitle:String = "Success";
+            private const _defaultMessagingPopupMessage:String = "successful";
+
+            [Bindable] public var messagingPopupTitle:String = _defaultMessagingPopupTitle;
+            [Bindable] public var messagingPopupMessage:String = _defaultMessagingPopupMessage;
+
+            private var _formValidatedSuccessfully:Boolean;
+
+
+            private function _validateLoginData():Boolean
+            {
+                var username:String = username_ti.text;
+                var password:String = password_ti.text;
+
+                if( username == "" || password == "" )
+                {
+                    messagingPopupTitle = "Login Error";
+                    messagingPopupMessage = "Please fill out username/email and password.";
+                    _formValidatedSuccessfully = false;
+                }
+                else if( username.toLowerCase() != "student" || password != "password" )
+                {
+                    messagingPopupTitle = "Login Error";
+                    messagingPopupMessage = "Invalid user/password combination.";
+                    _formValidatedSuccessfully = false;
+                }
+                else
+                {
+                    messagingPopupTitle = "Login " + _defaultMessagingPopupTitle;
+                    messagingPopupMessage = "Login " + _defaultMessagingPopupMessage;
+                    _formValidatedSuccessfully = true;
+                }
+                return _formValidatedSuccessfully;
+            }
+
+            private function _validateRegistrationData():Boolean
+            {
+                var username:String = reg_username_ti.text;
+                var email:String = reg_email_ti.text;
+                var password:String = password_ti.text;
+                var confirmPassword:String = confirm_password_ti.text;
+                var agreeToTerms:Boolean = agreeToTerms_chk.selected;
+
+                if( username == ""
+                    || email == ""
+                    || password == ""
+                    || confirmPassword == ""
+                    || !agreeToTerms )
+                {
+                    messagingPopupTitle = "Registration Error";
+                    messagingPopupMessage = "Please fill out all required (*) fields.";
+                    _formValidatedSuccessfully = false;
+                }
+                else
+                {
+                    messagingPopupTitle = "Account Creation " + _defaultMessagingPopupTitle;
+                    messagingPopupMessage = "Account creation " + _defaultMessagingPopupMessage;
+                    _formValidatedSuccessfully = true;
+                }
+                return _formValidatedSuccessfully;
+            }
+
+            private function _onSubmitClick( event:Event ):void
+            {
+
+                if( this.currentState  == VIEW_STATE_LOGIN )
+                {
+                    _validateLoginData();
+                }
+                else
+                {
+                    _validateRegistrationData();
+                }
+
+                messagingPopup.open( this, true );
+                PopUpManager.centerPopUp( messagingPopup );
+            }
+
+            private function _onMessagingPopupClose( event:Event ):void
+            {
+                if( _formValidatedSuccessfully )
+                {
+                    // TODO: Dispatch a NavigationEvent of Type GOTO_SCREEN and pass in the right screenName to go to the LocationDetailsView
+                }
+            }
+
+            private function _onLoginOrRegisterToggleClick( event:Event ):void
+            {
+                trace("Label Click :: Current State =  " + this.currentState );
+                // TODO: Dispatch the NavigationEvent of Type GOTO_SCREEN and pass in the right screenName to toggle between login and register
+
+            }
+
+
+            override public function set data( data:Object ):void
+            {
+                if( data is String && ( data == ApplicationScreens.LOGIN || data == ApplicationScreens.REGISTER ) )
+                {
+                    this.currentState = data.toString();
+                }
+            }
+        ]]>
+    </fx:Script>
+
+
+    <fx:Declarations>
+        <s:RadioButtonGroup id="genderRBGroup"/>
+
+        <popups:HelloWorldAppPopup id="messagingPopup"
+            title="{ messagingPopupTitle }"
+            message="{ messagingPopupMessage }"
+            close="_onMessagingPopupClose( event )"/>
+    </fx:Declarations>
+
+
+    <s:states>
+        <s:State name="login"/>
+        <s:State name="register"/>
+    </s:states>
+
+
+    <s:layout>
+        <s:VerticalLayout paddingTop="20" paddingBottom="20"
+            paddingLeft="20" paddingRight="20"/>
+    </s:layout>
+
+    <s:Scroller height="100%" width="100%"
+        top="20" left="20" right="20">
+
+        <s:VGroup id="accountForm">
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then this accountFormHeader label should say "Login". Otherwise it should say "Create An Account" -->
+            <s:Label id="accountFormHeader"
+                     text="Login"
+                     fontSize="42"
+                     paddingLeft="100"
+                     paddingBottom="20"/>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then show this Label and username_ti TextInput. Otherwise, hide it -->
+            <s:Label text="Username or email"/>
+            <s:TextInput id="username_ti"
+                prompt="please enter your username or email"/>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide this Label and reg_username_ti TextInput. Otherwise, show it -->
+            <s:Label text="Username *" includeIn="register"/>
+            <s:TextInput id="reg_username_ti" includeIn="register"
+                         prompt="choose a username"/>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide this Label and reg_email_ti TextInput. Otherwise, show it -->
+            <s:Label text="Email *" includeIn="register"/>
+            <s:TextInput id="reg_email_ti" includeIn="register"
+                         prompt="please enter your email"/>
+
+
+            <s:Label text="Password *"/>
+            <s:TextInput id="password_ti"
+                         prompt="enter a password"
+                         displayAsPassword="true"/>
+
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide this Label and confirm_password_ti TextInput. Otherwise, show it -->
+            <s:Label text="Confirm password *"/>
+            <s:TextInput id="confirm_password_ti"
+                         prompt="confirm the password"
+                         displayAsPassword="true"/>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide these components that have to do with gender selection. Otherwise, show them -->
+            <s:Label text="gender"/>
+            <s:HGroup id="genderSelect">
+
+                <s:RadioButton id="male_rb"
+                               group="{ genderRBGroup }"/>
+                <s:Label text="male"/>
+
+                <s:RadioButton id="female_rb"
+                               group="{ genderRBGroup }"/>
+                <s:Label text="female"/>
+
+            </s:HGroup>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide these components that have to do with terms and conditions. Otherwise, show them -->
+            <s:HGroup id="termsAndCond">
+                <s:CheckBox id="agreeToTerms_chk"/>
+                <s:Label text="agree to terms *"/>
+            </s:HGroup>
+
+            <s:Button id="submit_btn"
+                      label="submit"
+                      click="_onSubmitClick( event )"/>
+
+            <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then set the label text to "Create Account". Otherwise, set it to "Log In" -->
+            <s:Label id="loginOrRegisterToggle"
+                text="Create Account"
+                buttonMode="true" mouseChildren="false"
+                click="_onLoginOrRegisterToggleClick( event )"/>
+
+        </s:VGroup>
+
+    </s:Scroller>
+
+</s:View>
