@@ -4,7 +4,8 @@
 -->
 <s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
     xmlns:s="library://ns.adobe.com/flex/spark"
-    xmlns:popups="edu.du.mobile.view.popups.*">
+    xmlns:popups="edu.du.mobile.view.popups.*"
+    currentState="register">
 
     <fx:Script>
         <![CDATA[
@@ -116,6 +117,20 @@
                     this.currentState = data.toString();
                 }
             }
+
+            private function _onToggleViewStateClick( event:Event ):void
+            {
+                if( this.currentState == "register" )
+                {
+                    this.currentState = "login";
+                    accountFormHeader.text = "Login"
+                }
+                else if( this.currentState == "login" )
+                {
+                    this.currentState = "register";
+                    trace (this.currentState);
+                }
+            }
         ]]>
     </fx:Script>
 
@@ -147,16 +162,25 @@
         <s:VGroup id="accountForm">
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then this accountFormHeader label should say "Login". Otherwise it should say "Create An Account" -->
-            <s:Label id="accountFormHeader"
-                     text="Login"
-                     fontSize="42"
-                     paddingLeft="100"
-                     paddingBottom="20"/>
+                <s:Label id="accountFormHeader"
+                         text.login="Login"
+                         text.register="Create an Account"
+                         fontSize="42"
+                         paddingLeft="100"
+                         paddingBottom="20"/>
+                <s:Label id="toggleStateLabel"
+                         text.register="Already a member?"
+                         text.login="Need to register?"
+                         fontSize="28"
+                         click="_onToggleViewStateClick(event)"
+                         paddingBottom="20"/>
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then show this Label and username_ti TextInput. Otherwise, hide it -->
-            <s:Label text="Username or email"/>
+            <s:Label text="Username or email"
+                     excludeFrom="register"/>
             <s:TextInput id="username_ti"
-                prompt="please enter your username or email"/>
+                         prompt="please enter your username or email"
+                         excludeFrom="register"/>
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide this Label and reg_username_ti TextInput. Otherwise, show it -->
             <s:Label text="Username *" includeIn="register"/>
@@ -176,14 +200,18 @@
 
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide this Label and confirm_password_ti TextInput. Otherwise, show it -->
-            <s:Label text="Confirm password *"/>
+            <s:Label text="Confirm password *"
+                     excludeFrom="login"/>
             <s:TextInput id="confirm_password_ti"
                          prompt="confirm the password"
-                         displayAsPassword="true"/>
+                         displayAsPassword="true"
+                         excludeFrom="login"/>
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide these components that have to do with gender selection. Otherwise, show them -->
-            <s:Label text="gender"/>
-            <s:HGroup id="genderSelect">
+            <s:Label text="gender"
+                     excludeFrom="login"/>
+            <s:HGroup id="genderSelect"
+                      excludeFrom="login">
 
                 <s:RadioButton id="male_rb"
                                group="{ genderRBGroup }"/>
@@ -196,7 +224,8 @@
             </s:HGroup>
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then hide these components that have to do with terms and conditions. Otherwise, show them -->
-            <s:HGroup id="termsAndCond">
+            <s:HGroup id="termsAndCond"
+                      excludeFrom="login">
                 <s:CheckBox id="agreeToTerms_chk"/>
                 <s:Label text="agree to terms *"/>
             </s:HGroup>
@@ -207,7 +236,8 @@
 
             <!-- TODO: If LoginOrRegisterView.mxml currentState is login, then set the label text to "Create Account". Otherwise, set it to "Log In" -->
             <s:Label id="loginOrRegisterToggle"
-                text="Create Account"
+                text.register="Create Account"
+                text.login="Log In"
                 buttonMode="true" mouseChildren="false"
                 click="_onLoginOrRegisterToggleClick( event )"/>
 
