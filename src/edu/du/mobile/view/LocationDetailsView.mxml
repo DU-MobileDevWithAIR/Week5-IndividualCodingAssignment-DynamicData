@@ -3,19 +3,43 @@
   Created by scotty on 9/21/14.
 -->
 <s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
-    xmlns:s="library://ns.adobe.com/flex/spark">
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    creationComplete="_onCreationComplete( event )">
+
+    <fx:Script>
+        <![CDATA[
+            import edu.du.mobile.model.AppModel;
+
+            import mx.events.FlexEvent;
+
+            import mx.utils.ObjectUtil;
+
+            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
+            [Bindable] private var _appModel:AppModel;
+            [Bindable] private var _venue:Object;
+
+            private function _onCreationComplete( event:FlexEvent ):void
+            {
+                trace( ObjectUtil.toString( _appModel.selectedLocation ) );
+
+                // TODO: Assign _appModel.selectedLocation to _venue
+            }
+        ]]>
+    </fx:Script>
 
     <s:Scroller top="20" left="20" right="20"
         height="100%">
 
         <s:VGroup >
 
+            <s:Label text="{ _venue.name }"
+                     width="80%"/>
+
             <s:HGroup>
                 <s:Label text="Map"
                    color="blue"
                    paddingLeft="25"/>
-                <s:Label text="Location"
-                   paddingLeft="100"/>
+
                 <s:Label text="Share"
                    color="blue"
                    paddingLeft="70"/>
@@ -30,16 +54,16 @@
 
             <s:Label text="Phone"
                color="blue"/>
-            <s:Label text="303-333-3333"/>
+            <s:Label text="{ _venue.contact.formattedPhone }"/>
 
             <s:Label text="Website"
                color="blue"/>
-            <s:Label text="http://www.locationplace.com"/>
+            <s:Label text="N/A"/>
 
             <s:Label text="Address"
                color="blue"/>
-            <s:Label text="501 E Hello World Ave"/>
-            <s:Label text="Denver, CO 80203"/>
+            <s:Label text="{ _venue.location.formattedAddress[0] }"/>
+            <s:Label text="{  _venue.location.formattedAddress[1] }"/>
 
             <s:HGroup width="100%">
                 <s:Label text="Directions to Here"

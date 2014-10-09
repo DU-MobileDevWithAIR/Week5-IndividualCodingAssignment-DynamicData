@@ -10,45 +10,108 @@
 
     <fx:Script>
         <![CDATA[
-            import edu.du.mobile.control.events.NavigationEvent;
-            import edu.du.mobile.model.constants.ApplicationScreens;
-            import edu.du.mobile.view.LocationDetailsView;
-            import edu.du.mobile.view.LocationFeedListView;
-            import edu.du.mobile.view.LoginOrRegisterView;
+        import edu.du.mobile.control.events.VenueDataEvent;
+        import edu.du.mobile.control.events.NavigationEvent;
+        import edu.du.mobile.model.AppModel;
+        import edu.du.mobile.model.constants.ApplicationScreens;
+        import edu.du.mobile.view.LocationDetailsView;
+        import edu.du.mobile.view.LocationFeedListView;
+        import edu.du.mobile.view.LoginOrRegisterView;
 
-            import mx.events.FlexEvent;
+        import mx.events.FlexEvent;
+        import mx.rpc.Fault;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.events.ResultEvent;
+        import mx.utils.ObjectUtil;
 
-            private function _onApplicationComplete( event:FlexEvent ):void
-            {
-                this.addEventListener( NavigationEvent.GOTO_SCREEN, _onGotoScreen );
+        // https://developer.foursquare.com/docs/venues/search
+        public static const FOURSQUARE_LOCATION_SERVICE_BASE_URL:String = "https://api.foursquare.com/v2/venues/search?";
 
-                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER ) );
-            }
+        [Bindable]
+        private var _appModel:AppModel = AppModel.getInstance();
 
-            private function _onGotoScreen( event:NavigationEvent ):void
-            {
-                switch( event.screenName )
+        [Bindable]
+        private var _searchVenueServiceURL:String;
+
+        // Client ID and Secret were from creating an app registration: https://foursquare.com/developers/apps
+        private var _clientID:String = "FJOBDXJYZAIVCCTHHPVU4NIB5S5C5CCAKOGVKX2VCOBAKZUB";
+        private var _clientSecret:String = "4VM52Z3OJSPCM1GZTEIWOEO0DP0BDCEOHV0T2BIMK5LCYDXP";
+
+        // This is the lat/long for RealEyes Media @ 940 Logan St., Denver, CO 80203
+        private var _latitude:String = "39.7311660";
+        private var _longitude:String = "-104.9819070";
+
+
+        private function _updateSearchVenueServiceURL( searchString:String="" ):void {
+            // Example: https://api.foursquare.com/v2/venues/search?ll=39.7311660,-104.9819070&client_id=FJOBDXJYZAIVCCTHHPVU4NIB5S5C5CCAKOGVKX2VCOBAKZUB&client_secret=4VM52Z3OJSPCM1GZTEIWOEO0DP0BDCEOHV0T2BIMK5LCYDXP&v=20140806
+
+            // TODO: Set _searchVenueServiceURL to a URL that looks like the example above using a combination of member variables, static const, and literal strings.
+        }
+
+        private function _onApplicationComplete(event:FlexEvent):void {
+            this.addEventListener(NavigationEvent.GOTO_SCREEN, _onGotoScreen);
+
+            // TODO: Add _onGetVenues as an event listener for events of type VenueDataEvent.GET_VENUES
+
+            // TODO: Set navigation back to REGISTER after completing this week 5 assignment
+            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+        }
+
+        private function _onGotoScreen(event:NavigationEvent):void {
+            switch (event.screenName) {
+                case ApplicationScreens.LOCATION_FEED_LIST:
                 {
-                    case ApplicationScreens.LOCATION_FEED_LIST:
-                    {
-                        navigator.pushView( LocationFeedListView );
-                        break;
-                    }
-                    case ApplicationScreens.LOCATION_DETAILS:
-                    {
-                        navigator.pushView( LocationDetailsView );
-                        break;
-                    }
-                    case ApplicationScreens.LOGIN:
-                    case ApplicationScreens.REGISTER:
-                    {
-                        navigator.pushView( LoginOrRegisterView, event.screenName );
-                        break;
-                    }
-                    default: {};
+                    navigator.pushView(LocationFeedListView);
+                    break;
                 }
+                case ApplicationScreens.LOCATION_DETAILS:
+                {
+                    navigator.pushView(LocationDetailsView);
+                    break;
+                }
+                case ApplicationScreens.LOGIN:
+                case ApplicationScreens.REGISTER:
+                {
+                    navigator.pushView(LoginOrRegisterView, event.screenName);
+                    break;
+                }
+                default:
+                {
+                }
+                    ;
             }
+        }
+
+        private function _onGetVenues(event:VenueDataEvent):void {
+
+            // TODO: Call the _updateSearchVenueServiceURL() method
+
+            // TODO: Get the venues using the searchVenueService
+        }
+
+        private function _onSearchVenueServiceResult(event:ResultEvent):void {
+            trace(ObjectUtil.toString(event.result));
+
+            // TODO: Use JSON.parse() to assign event.result to venueData
+
+            trace(ObjectUtil.toString(venueData));
+
+            // TODO: Examine the structure of the venueData object during a debug session. Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
+        }
+
+        private function _onSearchVenueServiceFault(event:FaultEvent):void {
+            trace("Error calling Foursquare Service");
+        }
         ]]>
     </fx:Script>
+
+    <fx:Declarations>
+        <!-- TODO: Add _onSearchVenueServiceResult() as a result handler -->
+        <!-- TODO: Add _onSearchVenueServiceFault() as a fault handler -->
+        <!-- TODO: Bind _searchVenueServiceURL to the url attribute of this HTTPService -->
+        <s:HTTPService id="searchVenueService"
+            resultFormat="text"
+            showBusyCursor="true" />
+    </fx:Declarations>
 
 </s:ViewNavigatorApplication>
