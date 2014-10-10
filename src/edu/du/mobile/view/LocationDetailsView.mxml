@@ -15,7 +15,7 @@
             import mx.utils.ObjectUtil;
 
             // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
             [Bindable] private var _venue:Object;
 
             private function _onCreationComplete( event:FlexEvent ):void
@@ -23,6 +23,7 @@
                 trace( ObjectUtil.toString( _appModel.selectedLocation ) );
 
                 // TODO: Assign _appModel.selectedLocation to _venue
+                this._venue = _appModel.selectedLocation;
             }
         ]]>
     </fx:Script>
@@ -62,8 +63,9 @@
 
             <s:Label text="Address"
                color="blue"/>
-            <s:Label text="{ _venue.location.formattedAddress[0] }"/>
-            <s:Label text="{  _venue.location.formattedAddress[1] }"/>
+            <!-- Console Warning about brackets not allowing changes and recommended using method //-->
+            <s:Label text="{ _venue.location.formattedAddress.getItemAt(0) }"/>
+            <s:Label text="{  _venue.location.formattedAddress.getItemAt(1) }"/>
 
             <s:HGroup width="100%">
                 <s:Label text="Directions to Here"
