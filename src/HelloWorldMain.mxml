@@ -57,7 +57,7 @@
             this.addEventListener(VenueDataEvent.GET_VENUES, _onGetVenues);
 
             // TODO: Set navigation back to REGISTER after completing this week 5 assignment
-            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER));
         }
 
         private function _onGotoScreen(event:NavigationEvent):void {
@@ -101,7 +101,7 @@
             trace(ObjectUtil.toString(venueData));
 
             // TODO: Examine the structure of the venueData object during a debug session. Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
-            _appModel.locationCollection.source = venueData.response.venues;
+             _appModel.locationCollection.source = venueData.response.venues;
         }
 
         private function _onSearchVenueServiceFault(event:FaultEvent):void {

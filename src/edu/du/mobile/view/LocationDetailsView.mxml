@@ -8,23 +8,44 @@
 
     <fx:Script>
         <![CDATA[
-            import edu.du.mobile.model.AppModel;
+        import edu.du.mobile.model.AppModel;
 
-            import mx.events.FlexEvent;
+        import mx.events.FlexEvent;
 
-            import mx.utils.ObjectUtil;
+        import mx.utils.ObjectUtil;
 
-            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
-            [Bindable] private var _venue:Object;
+        import edu.du.mobile.control.events.NavigationEvent;
+        import edu.du.mobile.model.constants.ApplicationScreens;
 
-            private function _onCreationComplete( event:FlexEvent ):void
-            {
-                trace( ObjectUtil.toString( _appModel.selectedLocation ) );
+        // TODO: Assign the AppModel Singleton instance to the _appModel variable.
+        [Bindable] private var _appModel:AppModel = AppModel.getInstance();
+        [Bindable] private var _venue:Object;
 
-                // TODO: Assign _appModel.selectedLocation to _venue
-                this._venue = _appModel.selectedLocation;
+        [Bindable] private var url:String;
+        [Bindable] private var phone:String;
+
+
+        private function _onCreationComplete(event:FlexEvent):void {
+            trace(ObjectUtil.toString(_appModel.selectedLocation));
+
+            // TODO: Assign _appModel.selectedLocation to _venue
+            _venue = _appModel.selectedLocation;
+            // conditional information
+            if (_venue.url != undefined) {
+                url = _venue.url;
+            } else {
+                url = "Not available";
             }
+
+            if( _venue.contact.formattedPhone != undefined){
+                phone =  _venue.contact.formattedPhone;
+            } else {
+                phone =  "Not available";
+            }
+        }
+        private function _onBackButtonClick():void {
+            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+        }
         ]]>
     </fx:Script>
 
@@ -55,17 +76,16 @@
 
             <s:Label text="Phone"
                color="blue"/>
-            <s:Label text="{ _venue.contact.formattedPhone }"/>
+            <s:Label text="{ phone }"/>
 
             <s:Label text="Website"
                color="blue"/>
-            <s:Label text="N/A"/>
+            <s:Label text="{ url }"/>
 
             <s:Label text="Address"
                color="blue"/>
-            <!-- Console Warning about brackets not allowing changes and recommended using method //-->
-            <s:Label text="{ _venue.location.formattedAddress.getItemAt(0) }"/>
-            <s:Label text="{  _venue.location.formattedAddress.getItemAt(1) }"/>
+            <s:Label text="{ _venue.location.formattedAddress[0] }"/>
+            <s:Label text="{  _venue.location.formattedAddress[1] }"/>
 
             <s:HGroup width="100%">
                 <s:Label text="Directions to Here"
@@ -74,7 +94,11 @@
                 <s:Label text="Directions from Here"
                     color="blue"/>
             </s:HGroup>
-
+            <s:Label id="backToListButton"
+                     text="Back to locations list"
+                     buttonMode="true" mouseChildren="false"
+                     click="_onBackButtonClick()"
+                    color="blue" paddingTop="10"/>
         </s:VGroup>
 
     </s:Scroller>

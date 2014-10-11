@@ -27,7 +27,7 @@
         private function _onListChange(event:Event):void {
 
             // TODO: Assign locationList.selectedItem to _appModel.selectedLocation
-            _appModel.selectedLocation = locationList.selectedItems;
+            _appModel.selectedLocation = locationList.selectedItem;
             dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_DETAILS));
         }
         ]]>
