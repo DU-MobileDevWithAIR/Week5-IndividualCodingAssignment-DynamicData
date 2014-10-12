@@ -5,7 +5,6 @@ package edu.du.mobile.model
 {
 
     import flash.events.EventDispatcher;
-
     import mx.collections.ArrayCollection;
 
     public class AppModel extends EventDispatcher
@@ -53,6 +52,12 @@ package edu.du.mobile.model
 
         // TODO: Create a Bindable getter/setter methods for _selectedLocation
 
+        public function get selectedLocation():Object {
+            return _selectedLocation;
+        }
+        public function set selectedLocation(value:Object):void {
+            _selectedLocation = value;
+        }
     }
 }
 internal class SingletonEnforcer{}
