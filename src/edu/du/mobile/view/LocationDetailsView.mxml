@@ -9,20 +9,35 @@
     <fx:Script>
         <![CDATA[
             import edu.du.mobile.model.AppModel;
-
             import mx.events.FlexEvent;
-
             import mx.utils.ObjectUtil;
+            import edu.du.mobile.control.events.NavigationEvent;
+            import edu.du.mobile.model.constants.ApplicationScreens;
 
             // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+
+            [Bindable] private var _appModel:AppModel=AppModel.getInstance();
             [Bindable] private var _venue:Object;
+
+            [Bindable] private var url:String;
+            [Bindable] private var phone:String;
 
             private function _onCreationComplete( event:FlexEvent ):void
             {
                 trace( ObjectUtil.toString( _appModel.selectedLocation ) );
 
                 // TODO: Assign _appModel.selectedLocation to _venue
+
+                _venue = _appModel.selectedLocation;
+
+            }
+            private function _onLocationButton( event:Event ):void
+            {
+                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST ) );
+            }
+            private function _onHomeButton( event:Event ):void
+            {
+                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER ) );
             }
         ]]>
     </fx:Script>
@@ -71,7 +86,30 @@
                 <s:Spacer width="100%"/>
                 <s:Label text="Directions from Here"
                     color="blue"/>
+
             </s:HGroup>
+
+            <s:Group width="100%">
+
+                <s:layout>
+                    <s:HorizontalLayout
+                            verticalAlign="middle"
+                            horizontalAlign="center"/>
+                </s:layout>
+
+                <s:Button id="newLocationButton"
+                          label="New Location"
+                          left="0"
+                          click="_onLocationButton( event )"
+                          width="45%"
+                          top="0"/>
+                <s:Button id="homeButton"
+                          label="Register"
+                          left="0"
+                          click="_onHomeButton( event )"
+                          width="45%"
+                          top="0"/>
+            </s:Group>
 
         </s:VGroup>
 
