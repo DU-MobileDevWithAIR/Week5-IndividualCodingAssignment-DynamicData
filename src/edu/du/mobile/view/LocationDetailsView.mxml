@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <!--
   Created by scotty on 9/21/14.
+  Modified by Kami on 10/10/14.
+  Back Button added to take user back to List
 -->
 <s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
     xmlns:s="library://ns.adobe.com/flex/spark"
@@ -9,20 +11,26 @@
     <fx:Script>
         <![CDATA[
             import edu.du.mobile.model.AppModel;
+            import edu.du.mobile.control.events.NavigationEvent;
+            import edu.du.mobile.model.constants.ApplicationScreens;
 
             import mx.events.FlexEvent;
 
             import mx.utils.ObjectUtil;
 
-            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
             [Bindable] private var _venue:Object;
 
             private function _onCreationComplete( event:FlexEvent ):void
             {
                 trace( ObjectUtil.toString( _appModel.selectedLocation ) );
 
-                // TODO: Assign _appModel.selectedLocation to _venue
+                _venue = _appModel.selectedLocation;
+            }
+
+            private function _onBackClick(event:Event):void
+            {
+                dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
             }
         ]]>
     </fx:Script>
@@ -72,6 +80,14 @@
                 <s:Label text="Directions from Here"
                     color="blue"/>
             </s:HGroup>
+
+            <s:Button id="back_btn"
+                      label="Back"
+                      left="0"
+                      width="98%"
+                      top="15"
+                      horizontalCenter="0"
+                      click="_onBackClick( event )"/>
 
         </s:VGroup>
 
