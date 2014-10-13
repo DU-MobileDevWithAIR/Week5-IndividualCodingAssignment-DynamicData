@@ -20,12 +20,14 @@
 
         private function _onCreationComplete(event:FlexEvent):void {
 
-            // TODO: Dispatch a VenueDataEvent to get venues
+            // TODO: Dispatch a VenueDataEvent to get venues - Done
+            dispatchEvent(new VenueDataEvent(VenueDataEvent.GET_VENUES));
         }
 
         private function _onListChange(event:Event):void {
 
-            // TODO: Assign locationList.selectedItem to _appModel.selectedLocation
+            // TODO: Assign locationList.selectedItem to _appModel.selectedLocation - Done
+            _appModel.selectedLocation = locationList.selectedItems;
 
             dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_DETAILS));
         }
@@ -46,13 +48,15 @@
             paddingLeft="70"/>
     </s:HGroup>
 
-    <!-- TODO: Bind the dataProvider for this list to _appModel.locationCollection -->
-    <!-- TODO: Set the labelField for this list to "name" -->
+    <!-- TODO: Bind the dataProvider for this list to _appModel.locationCollection Done-->
+    <!-- TODO: Set the labelField for this list to "name" Done-->
     <s:List id="locationList"
+        dataProvider="{_appModel.locationCollection}"
         top="100"
         width="100%"
         height="100%"
         allowMultipleSelection="false"
-        change="_onListChange( event )"/>
+        change="_onListChange( event )"
+        labelField="name"/>
 
 </s:View>
