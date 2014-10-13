@@ -14,15 +14,13 @@
 
             import mx.utils.ObjectUtil;
 
-            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
             [Bindable] private var _venue:Object;
 
             private function _onCreationComplete( event:FlexEvent ):void
             {
-                trace( ObjectUtil.toString( _appModel.selectedLocation ) );
 
-                // TODO: Assign _appModel.selectedLocation to _venue
+                _venue = _appModel.selectedLocation;
             }
         ]]>
     </fx:Script>
