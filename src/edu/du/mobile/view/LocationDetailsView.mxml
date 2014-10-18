@@ -4,25 +4,25 @@
 -->
 <s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
     xmlns:s="library://ns.adobe.com/flex/spark"
-    creationComplete="_onCreationComplete( event )">
+    creationComplete="_onCreationComplete( event )"
+    >
 
     <fx:Script>
         <![CDATA[
             import edu.du.mobile.model.AppModel;
-
             import mx.events.FlexEvent;
-
             import mx.utils.ObjectUtil;
 
-            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+            // TO-DONE: Assign the AppModel Singleton instance to the _appModel variable.
+            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
+            /* Per multiple sources, getInstance is the appropriate singleton access method (rather than new Something) */
             [Bindable] private var _venue:Object;
 
             private function _onCreationComplete( event:FlexEvent ):void
             {
                 trace( ObjectUtil.toString( _appModel.selectedLocation ) );
-
-                // TODO: Assign _appModel.selectedLocation to _venue
+                // TO-DONE: Assign _appModel.selectedLocation to _venue
+                _venue = _appModel.selectedLocation;
             }
         ]]>
     </fx:Script>
@@ -31,7 +31,8 @@
         height="100%">
 
         <s:VGroup >
-
+            <s:Label text="Back to List" click="navigator.pushView(LocationFeedListView)" />
+            <!-- I added this selfishly so it would be easier to test. -->
             <s:Label text="{ _venue.name }"
                      width="80%"/>
 
@@ -49,7 +50,9 @@
                height="300"
                width="100%"
                backgroundColor="#000000"/>
-
+            <!-- I tried implementing OpenScales and did not succeed. TODO (self-imposed): figure out
+                how to get OPenScales swcs imported properly. I spent an embarrassingly long time trying to get it to work:
+                openscales.org-->
 
 
             <s:Label text="Phone"

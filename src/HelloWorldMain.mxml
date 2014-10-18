@@ -17,12 +17,9 @@
         import edu.du.mobile.view.LocationDetailsView;
         import edu.du.mobile.view.LocationFeedListView;
         import edu.du.mobile.view.LoginOrRegisterView;
-
         import mx.events.FlexEvent;
-        import mx.rpc.Fault;
         import mx.rpc.events.FaultEvent;
         import mx.rpc.events.ResultEvent;
-        import mx.utils.ObjectUtil;
 
         // https://developer.foursquare.com/docs/venues/search
         public static const FOURSQUARE_LOCATION_SERVICE_BASE_URL:String = "https://api.foursquare.com/v2/venues/search?";
@@ -42,19 +39,48 @@
         private var _longitude:String = "-104.9819070";
 
 
-        private function _updateSearchVenueServiceURL( searchString:String="" ):void {
-            // Example: https://api.foursquare.com/v2/venues/search?ll=39.7311660,-104.9819070&client_id=FJOBDXJYZAIVCCTHHPVU4NIB5S5C5CCAKOGVKX2VCOBAKZUB&client_secret=4VM52Z3OJSPCM1GZTEIWOEO0DP0BDCEOHV0T2BIMK5LCYDXP&v=20140806
+        private function _updateSearchVenueServiceURL(searchString:String = ""):void {
+            // Example: https://api.foursquare.com/v2/venues/search?
+            // ll=39.7311660,-104.9819070
+            // &client_id=FJOBDXJYZAIVCCTHHPVU4NIB5S5C5CCAKOGVKX2VCOBAKZUB
+            // &client_secret=4VM52Z3OJSPCM1GZTEIWOEO0DP0BDCEOHV0T2BIMK5LCYDXP
+            // &v=20140806
 
-            // TODO: Set _searchVenueServiceURL to a URL that looks like the example above using a combination of member variables, static const, and literal strings.
+            // TO-DONE: Set _searchVenueServiceURL to a URL that looks like the example above using a
+            // combination of member variables, static const, and literal strings.
+
+            /* Instead of specifying a joiner (&) and assignment (=) variable to build the URL, I'm taking advantage of
+             * AS's URLVariables constructor. Method borrowed from multiple Adobe sources including
+             * http://help.adobe.com/en_US/as3/dev/WSb2ba3b1aad8a27b061afd5d7127074bbf44-8000.html */
+
+            var buildURL:URLRequest = new URLRequest(FOURSQUARE_LOCATION_SERVICE_BASE_URL);
+            var urlVariables:URLVariables = new URLVariables();
+            urlVariables.decode("amp=" + encodeURIComponent("&"));
+            urlVariables.ll = _latitude + ',' + _longitude;
+            urlVariables.client_id = _clientID;
+            urlVariables.client_secret = _clientSecret;
+            urlVariables.v = '20140806';
+            /* Per FourSquare For Developers: "A v parameter, which is a date [in YYYYMMDD format] that essentially
+             * represents the "version" of the API you expect from Foursquare...[and under] no
+             * circumstances should you always pass in the current date" Because the example does not include the m
+             * parameter, the date passed must be less than or equal to 20140806. Thanks to this, the parameter is being
+             * assigned statically rather than with a date function. */
+
+            buildURL.data = urlVariables;
+            /* Because the following is appending the decoded get variables and appending them, setting the method is
+             * not necessary. This whole experiment is not really an appropriate use of either URLRequest or URLVariables,
+             * but it was a good opportunity to explore. A string with variables properly placed will have sufficed. */
+            _searchVenueServiceURL = String(buildURL.url + buildURL.data);
+            trace('Service URL is' + _searchVenueServiceURL);
         }
 
         private function _onApplicationComplete(event:FlexEvent):void {
             this.addEventListener(NavigationEvent.GOTO_SCREEN, _onGotoScreen);
 
-            // TODO: Add _onGetVenues as an event listener for events of type VenueDataEvent.GET_VENUES
-
-            // TODO: Set navigation back to REGISTER after completing this week 5 assignment
-            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+            // TO-DONE: Add _onGetVenues as an event listener for events of type VenueDataEvent.GET_VENUES
+            addEventListener(VenueDataEvent.GET_VENUES, _onGetVenues);
+            // TO-DONE: Set navigation back to REGISTER after completing this week 5 assignment
+            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER));
         }
 
         private function _onGotoScreen(event:NavigationEvent):void {
@@ -84,19 +110,51 @@
 
         private function _onGetVenues(event:VenueDataEvent):void {
 
-            // TODO: Call the _updateSearchVenueServiceURL() method
+            // TO-DONE: Call the _updateSearchVenueServiceURL() method
+            _updateSearchVenueServiceURL();
+            // TO-DONE: Get the venues using the searchVenueService
+            searchVenueService.send();
+            /* Per Adobe, "When you call the HTTPService object's send() method, it makes an HTTP request to the
+             * specified URL, and an HTTP response is returned." In this case, searchVenueService is an HTTPService, so send
+             * must be used. */
 
-            // TODO: Get the venues using the searchVenueService
         }
 
         private function _onSearchVenueServiceResult(event:ResultEvent):void {
-            trace(ObjectUtil.toString(event.result));
+            // Thank you, Adobe! http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/JSON.html#include
+            // ExamplesSummary
+            // TO-DONE: Use JSON.parse() to assign event.result to venueData
+            var venueData = JSON.parse(String(event.result));
+            trace(flash.utils.describeType(venueData));
+            // TO-DONE: Examine the structure of the venueData object during a debug session.
+            // Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
+            function showChildren(jsonObject, indentChild = 0) {
+                // Is this accurate or particularly useful? Or well written? No, not really, but it was a fun
+                // exercise in iteration.
+                for each (var child:* in jsonObject) {
+                    var tracerString = "Child";
+                    if (indentChild) {
+                        tracerString = " -- Level " + indentChild;
+                    }
+                    trace(tracerString + ' ->');
+                    trace(String(child) + " = " + String(jsonObject[child]));
+                    for (var i:Object in child) {
+                        trace(String(i) + " :: " + String(child[i]));
+                        var childLevel = 1;
+                        if (indentChild) {
+                            childLevel = indentChild + 1;
+                        }
+                        showChildren(child[i], childLevel);
+                    }
+                }
+            }
 
-            // TODO: Use JSON.parse() to assign event.result to venueData
-
-            trace(ObjectUtil.toString(venueData));
-
-            // TODO: Examine the structure of the venueData object during a debug session. Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
+            //showChildren(venueData);
+            if (venueData.response.hasOwnProperty('venues')) {
+            // This is a third-party API, we shouldn't just assume we'll be getting the returned values we're expecting.
+                _appModel.locationCollection.source = venueData.response.venues;
+                trace('_appModel has been assigned');
+            }
         }
 
         private function _onSearchVenueServiceFault(event:FaultEvent):void {
@@ -106,12 +164,15 @@
     </fx:Script>
 
     <fx:Declarations>
-        <!-- TODO: Add _onSearchVenueServiceResult() as a result handler -->
-        <!-- TODO: Add _onSearchVenueServiceFault() as a fault handler -->
-        <!-- TODO: Bind _searchVenueServiceURL to the url attribute of this HTTPService -->
+        <!-- TO-DONE: Add _onSearchVenueServiceResult() as a result handler -->
+        <!-- TO-DONE: Add _onSearchVenueServiceFault() as a fault handler -->
+        <!-- TO-DONE: Bind _searchVenueServiceURL to the url attribute of this HTTPService -->
         <s:HTTPService id="searchVenueService"
             resultFormat="text"
-            showBusyCursor="true" />
+            showBusyCursor="true"
+            result="_onSearchVenueServiceResult(event)"
+            fault="_onSearchVenueServiceFault(event)"
+            url="{_searchVenueServiceURL}"/>
     </fx:Declarations>
 
 </s:ViewNavigatorApplication>
