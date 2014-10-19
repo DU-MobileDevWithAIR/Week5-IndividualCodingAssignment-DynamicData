@@ -45,16 +45,19 @@
         private function _updateSearchVenueServiceURL( searchString:String="" ):void {
             // Example: https://api.foursquare.com/v2/venues/search?ll=39.7311660,-104.9819070&client_id=FJOBDXJYZAIVCCTHHPVU4NIB5S5C5CCAKOGVKX2VCOBAKZUB&client_secret=4VM52Z3OJSPCM1GZTEIWOEO0DP0BDCEOHV0T2BIMK5LCYDXP&v=20140806
 
-            // TODO: Set _searchVenueServiceURL to a URL that looks like the example above using a combination of member variables, static const, and literal strings.
+            // DONE: Set _searchVenueServiceURL to a URL that looks like the example above using a combination of member variables, static const, and literal strings.
+            _searchVenueServiceURL = FOURSQUARE_LOCATION_SERVICE_BASE_URL + 'll=' + _latitude + ',' + _longitude +
+                    '&client_id=' + _clientID + '&client_secret' + _clientSecret + '&v=20140806';
         }
 
         private function _onApplicationComplete(event:FlexEvent):void {
             this.addEventListener(NavigationEvent.GOTO_SCREEN, _onGotoScreen);
 
-            // TODO: Add _onGetVenues as an event listener for events of type VenueDataEvent.GET_VENUES
+            // DONE: Add _onGetVenues as an event listener for events of type VenueDataEvent.GET_VENUES
+            this.addEventListener( VenueDataEvent.GET_VENUES, _onGetVenues );
 
-            // TODO: Set navigation back to REGISTER after completing this week 5 assignment
-            dispatchEvent(new NavigationEvent(NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+            // DONE: Set navigation back to REGISTER after completing this week 5 assignment
+            dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER ));
         }
 
         private function _onGotoScreen(event:NavigationEvent):void {
@@ -84,19 +87,22 @@
 
         private function _onGetVenues(event:VenueDataEvent):void {
 
-            // TODO: Call the _updateSearchVenueServiceURL() method
+            // DONE: Call the _updateSearchVenueServiceURL() method
+            _updateSearchVenueServiceURL();
 
-            // TODO: Get the venues using the searchVenueService
+            // DONE: Get the venues using the searchVenueService
+            searchVenueService.send();
         }
 
         private function _onSearchVenueServiceResult(event:ResultEvent):void {
             trace(ObjectUtil.toString(event.result));
 
-            // TODO: Use JSON.parse() to assign event.result to venueData
-
+            // DONE: Use JSON.parse() to assign event.result to venueData
+            var venueData:Object = JSON.parse(event.result as String);
             trace(ObjectUtil.toString(venueData));
 
-            // TODO: Examine the structure of the venueData object during a debug session. Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
+            // DONE: Examine the structure of the venueData object during a debug session. Afterwards assign the venues array within the venueData object to _appModel.locationCollection.source
+            _appModel.locationCollection.source = venueData.response.venues;
         }
 
         private function _onSearchVenueServiceFault(event:FaultEvent):void {
@@ -106,12 +112,15 @@
     </fx:Script>
 
     <fx:Declarations>
-        <!-- TODO: Add _onSearchVenueServiceResult() as a result handler -->
-        <!-- TODO: Add _onSearchVenueServiceFault() as a fault handler -->
-        <!-- TODO: Bind _searchVenueServiceURL to the url attribute of this HTTPService -->
+        <!-- DONE: Add _onSearchVenueServiceResult() as a result handler -->
+        <!-- DONE: Add _onSearchVenueServiceFault() as a fault handler -->
+        <!-- DONE: Bind _searchVenueServiceURL to the url attribute of this HTTPService -->
         <s:HTTPService id="searchVenueService"
             resultFormat="text"
-            showBusyCursor="true" />
+            showBusyCursor="true"
+            result="_onSearchVenueServiceResult(event)"
+            fault="_onSearchVenueServiceFault(event)"
+            url="'{_searchVenueServiceURL}"/>
     </fx:Declarations>
 
 </s:ViewNavigatorApplication>
