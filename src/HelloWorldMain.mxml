@@ -47,7 +47,7 @@
 
             // DONE: Set _searchVenueServiceURL to a URL that looks like the example above using a combination of member variables, static const, and literal strings.
             _searchVenueServiceURL = FOURSQUARE_LOCATION_SERVICE_BASE_URL + 'll=' + _latitude + ',' + _longitude +
-                    '&client_id=' + _clientID + '&client_secret' + _clientSecret + '&v=20140806';
+                    '&client_id=' + _clientID + '&client_secret=' + _clientSecret + '&v=20140806';
         }
 
         private function _onApplicationComplete(event:FlexEvent):void {
