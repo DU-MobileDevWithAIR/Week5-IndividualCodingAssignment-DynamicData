@@ -51,8 +51,14 @@ package edu.du.mobile.model
             _locationCollection = value;
         }
 
-        // TODO: Create a Bindable getter/setter methods for _selectedLocation
+        // DONE: Create a Bindable getter/setter methods for _selectedLocation
+        public function get selectedLocation(): Object {
+            return _selectedLocation;
+        }
 
+        public function set selectedLocation(value: Object): void {
+            _selectedLocation = value;
+        }
     }
 }
 internal class SingletonEnforcer{}

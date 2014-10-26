@@ -14,15 +14,27 @@
 
             import mx.utils.ObjectUtil;
 
-            // TODO: Assign the AppModel Singleton instance to the _appModel variable.
-            [Bindable] private var _appModel:AppModel;
+            import edu.du.mobile.control.events.NavigationEvent;
+            import edu.du.mobile.model.constants.ApplicationScreens;
+
+            // DONE: Assign the AppModel Singleton instance to the _appModel variable.
+            [Bindable] private var _appModel:AppModel = AppModel.getInstance();
             [Bindable] private var _venue:Object;
 
             private function _onCreationComplete( event:FlexEvent ):void
             {
                 trace( ObjectUtil.toString( _appModel.selectedLocation ) );
 
-                // TODO: Assign _appModel.selectedLocation to _venue
+                // DONE: Assign _appModel.selectedLocation to _venue
+                _venue = _appModel.selectedLocation;
+            }
+
+            private function _onLocationButton (event: Event): void {
+                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.LOCATION_FEED_LIST));
+            }
+
+            private function _onHomeButton (event: Event): void {
+                dispatchEvent( new NavigationEvent( NavigationEvent.GOTO_SCREEN, ApplicationScreens.REGISTER));
             }
         ]]>
     </fx:Script>
